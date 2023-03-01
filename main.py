@@ -24,7 +24,7 @@ async def get_car_data(plate):
         or plate == 'favicon.ico'
             or len(plate) != 6):
         return {}
-    html_string = fetchHTML(plate=plate, save_file=True)
+    html_string = fetchHTML(plate=plate, save_file=False)
     data = go_scrape(html_string)
     return data
 
@@ -37,7 +37,7 @@ async def get_demo_car_data(plate):
         or plate == 'favicon.ico'
             or len(plate) != 6):
         return {}
-    html_string = fetchHTML(plate=plate, save_file=True)
+    html_string = fetchHTML(plate=plate, save_file=False)
     data = go_scrape(html_string)
     custom_data = {
         "model": data['car_data'].get('modelo', ''),
@@ -58,7 +58,7 @@ async def get_format_message(plate):
         or plate == 'favicon.ico'
             or len(plate) != 6):
         return {}
-    html_string = fetchHTML(plate=plate, save_file=True)
+    html_string = fetchHTML(plate=plate, save_file=False)
     data = go_scrape(html_string)
     msg = get_format_msg(data)
     return msg
