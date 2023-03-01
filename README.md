@@ -45,5 +45,9 @@ Para correr el proyecto como API
 2. Abrir terminal y correr el comando `uvicorn main:app --reload`
 3. Abrir el puerto que aparece
 
+Para correrlo con Docker
+1. Crear la imagen localmente `docker build . -t chilean-carplates-api`
+2. Correr la imagen como contenedor: `docker run --p 8000:80 chilean-carplates-api`
+
 ## Recommended
 - Abrir el siguiente url para ver documentacion: `http://127.0.0.1:8000/docs`, el path `docs` lleva directamente a una documentacion en OpenAPI
