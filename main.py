@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fetch import fetchHTML
+from scrape import go_scrape
+from format_msg import get_format_msg
+from fastapi.responses import PlainTextResponse
 
 app = FastAPI()
 
@@ -12,16 +16,49 @@ async def root():
     return {"message": "Hello World. Welcome to FastAPI!"}
 
 
-@app.get("/path")
-async def demo_get():
-    return {"message": "This is /path endpoint, use a post request to transform the text to uppercase"}
+@app.get('/{plate}')
+async def get_car_data(plate):
+    print("PLATE: ", plate)
+    if (plate is None
+        or plate == ''
+        or plate == 'favicon.ico'
+            or len(plate) != 6):
+        return {}
+    html_string = fetchHTML(plate=plate, save_file=True)
+    data = go_scrape(html_string)
+    return data
 
 
-@app.post("/path")
-async def demo_post(inp: Msg):
-    return {"message": inp.msg.upper()}
+@app.get('/demo/{plate}')
+async def get_demo_car_data(plate):
+    print("PLATE: ", plate)
+    if (plate is None
+        or plate == ''
+        or plate == 'favicon.ico'
+            or len(plate) != 6):
+        return {}
+    html_string = fetchHTML(plate=plate, save_file=True)
+    data = go_scrape(html_string)
+    custom_data = {
+        "model": data['car_data'].get('modelo', ''),
+        "brand": data['car_data'].get('marca', ''),
+        "plate": data['car_data'].get('patente', ''),
+        "year": data['car_data'].get('año', ''),
+        "engine": data['car_data'].get('nmotor', ''),
+        "chassis": data['car_data'].get('nchasis', '')
+    }
+    return custom_data
 
 
-@app.get("/path/{path_id}")
-async def demo_get_path_id(path_id: int):
-    return {"message": f"This is /path/{path_id} endpoint, use post request to retrieve result"}
+@app.get('/format/{plate}', response_class=PlainTextResponse)
+async def get_format_message(plate):
+    print("PLATE: ", plate)
+    if (plate is None
+        or plate == ''
+        or plate == 'favicon.ico'
+            or len(plate) != 6):
+        return {}
+    html_string = fetchHTML(plate=plate, save_file=True)
+    data = go_scrape(html_string)
+    msg = get_format_msg(data)
+    return msg
